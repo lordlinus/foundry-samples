@@ -1,0 +1,47 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+
+requiredVersions:
+  azd: '>=1.27.1'
+  extensions:
+    azure.ai.agents: '>=1.0.0-beta.9'
+name: agent-framework-agent-anthropic-apim
+services:
+  # No model deployment: the agent talks to an Anthropic (Claude) model through
+  # an API Management gateway, not a Foundry-deployed model. The project is
+  # still required for hosting, identity, and session/conversation management.
+  ai-project:
+    host: azure.ai.project
+  agent-framework-agent-anthropic-apim:
+    host: azure.ai.agent
+    metadata:
+      tags:
+        - Agent Framework
+        - AI Agent Hosting
+        - Azure AI AgentServer
+        - Responses Protocol
+        - Anthropic
+        - APIM
+        - Streaming
+    project: src/agent-framework-agent-anthropic-apim
+    language: python
+    codeConfiguration:
+      runtime: python_3_13
+      entryPoint: main.py
+    uses:
+      - ai-project
+    kind: hosted
+    name: agent-framework-agent-anthropic-apim
+    description: An Agent Framework agent that calls an Anthropic (Claude) model through an APIM gateway, hosted by Foundry.
+    protocols:
+      - protocol: responses
+        version: 2.0.0
+    env:
+      ANTHROPIC_MODEL_NAME: ${ANTHROPIC_MODEL_NAME=claude-sonnet-5}
+      APIM_ANTHROPIC_BASE_URL: ${APIM_ANTHROPIC_BASE_URL}
+      APIM_SUBSCRIPTION_KEY: ${APIM_SUBSCRIPTION_KEY}
+    container:
+      resources:
+        cpu: '0.5'
+        memory: 1Gi
+infra:
+  provider: microsoft.foundry
